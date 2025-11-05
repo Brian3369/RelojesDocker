@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Tienda de Relojes</title>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+		<style>
+			:root{--bg:#0f1724;--card:#0b1220;--accent:#f59e0b;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+			*{box-sizing:border-box}
+			body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(180deg,#051423 0%,#071022 100%);color:#e6eef8;min-height:100vh}
+			header{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid rgba(255,255,255,0.03)}
+			.brand{display:flex;gap:12px;align-items:center}
+			.logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#f97316);display:flex;align-items:center;justify-content:center;font-weight:700;color:#061122}
+			h1{font-size:18px;margin:0}
+			nav{display:flex;gap:12px;align-items:center}
+			.btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+			.btn.accent{background:linear-gradient(90deg,var(--accent),#fb923c);color:#04111a;border:none}
+
+			main{display:grid;grid-template-columns:1fr 340px;gap:28px;padding:28px}
+
+			/* Catalog */
+			.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+			.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:12px}
+			.media{height:160px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.00));border-radius:8px}
+			.media svg{width:110px;height:110px;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.6))}
+			.title{display:flex;justify-content:space-between;align-items:center}
+			.title h3{margin:0;font-size:16px}
+			.price{font-weight:700;color:var(--accent)}
+			.desc{color:var(--muted);font-size:13px}
+			.actions{display:flex;gap:8px;margin-top:auto}
+			.small{font-size:13px;padding:8px 10px}
+
+			/* Cart */
+			.cart{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);height:fit-content}
+			.cart h2{margin-top:0}
+			.cart-list{display:flex;flex-direction:column;gap:12px;margin:12px 0}
+			.cart-item{display:flex;gap:10px;align-items:center}
+			.ci-thumb{width:52px;height:52px;border-radius:8px;background:linear-gradient(180deg,#071826,#072235);display:flex;align-items:center;justify-content:center}
+			.qty{display:flex;gap:6px;align-items:center}
+			.total{display:flex;justify-content:space-between;align-items:center;font-weight:700;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.03);margin-top:8px}
+
+			/* Checkout Modal */
+			.overlay{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:20px}
+			.modal{width:100%;max-width:640px;background:#061221;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+			.form-row{display:flex;gap:12px}
+			.form-row .field{flex:1}
+			input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+			textarea{min-height:80px}
+
+			footer{padding:18px 28px;color:var(--muted);font-size:13px;border-top:1px solid rgba(255,255,255,0.02)}
+
+			@media (max-width:900px){main{grid-template-columns:1fr} .cart{order:2} }
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="brand">
+				<div class="logo">RW</div>
+				<div>
+					<h1>Tienda Relojes</h1>
+					<div style="font-size:12px;color:var(--muted)">Relojes elegantes y resistentes</div>
+				</div>
+			</div>
+			<nav>
+				<button class="btn" id="btnCatalog">Catálogo</button>
+				<button class="btn" id="btnContact">Contacto</button>
+				<button class="btn accent" id="btnOpenCart">Ver carrito (<span id="cartCount">0</span>)</button>
+			</nav>
+		</header>
+
+		<main>
+			<section>
+				<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+					<h2 style="margin:0">Catálogo</h2>
+					<div style="color:var(--muted);font-size:14px">Envío gratuito por compras mayores a $200</div>
+				</div>
+
+				<div class="catalog" id="catalog"></div>
+			</section>
+
+			<aside class="cart" id="cartPane">
+				<h2>Tu carrito</h2>
+				<div class="cart-list" id="cartList"></div>
+				<div class="total">
+					<div>Total</div>
+					<div id="cartTotal">$0.00</div>
+				</div>
+				<div style="margin-top:12px;display:flex;gap:8px">
+					<button class="btn" id="btnClear">Vaciar</button>
+					<button class="btn accent" id="btnCheckout">Pagar</button>
+				</div>
+			</aside>
+		</main>
+
+		<div class="overlay" id="overlay">
+			<div class="modal" role="dialog" aria-modal="true">
+				<h3>Checkout</h3>
+				<form id="checkoutForm">
+					<div class="form-row">
+						<div class="field"><label>Nombre</label><input required id="cName" /></div>
+						<div class="field"><label>Email</label><input required id="cEmail" type="email" /></div>
+					</div>
+					<div style="margin-top:10px"><label>Dirección</label><textarea id="cAddress"></textarea></div>
+					<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+						<div style="color:var(--muted)">Total: <strong id="checkoutTotal">$0.00</strong></div>
+						<div style="display:flex;gap:8px">
+							<button type="button" class="btn" id="btnCloseOverlay">Cerrar</button>
+							<button type="submit" class="btn accent">Confirmar pedido</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<footer>
+			© <span id="year"></span> Tienda Relojes — Hecho con cuidado
+		</footer>
+
+		<script>
+			// Datos de productos (3 relojes)
+			const products = [
+				{id:'p1',name:'Atlas Chrono',price:149.00,desc:'Cronógrafo de acero inoxidable con resistencia al agua 50m.'},
+				{id:'p2',name:'Luna Minimal',price:99.00,desc:'Diseño minimalista con correa de cuero vegano y esfera limpia.'},
+				{id:'p3',name:'Marina Diver',price:229.00,desc:'Reloj diver 200m con bisel giratorio y lumen potente.'}
+			];
+
+			// Estado del carrito
+			let cart = JSON.parse(localStorage.getItem('cart:v1') || '{}');
+
+			function saveCart(){ localStorage.setItem('cart:v1', JSON.stringify(cart)); updateCartUI(); }
+
+			function formatPrice(v){return '$' + v.toFixed(2)}
+
+			function renderCatalog(){
+				const container = document.getElementById('catalog'); container.innerHTML='';
+				products.forEach(p=>{
+					const el = document.createElement('article'); el.className='card';
+					el.innerHTML = `
+						<div class="media">${watchSVG()}</div>
+						<div class="title"><h3>${p.name}</h3><div class="price">${formatPrice(p.price)}</div></div>
+						<div class="desc">${p.desc}</div>
+						<div class="actions">
+							<button class="btn small" data-add="${p.id}">Añadir</button>
+							<button class="btn small" data-buy="${p.id}">Comprar ahora</button>
+						</div>
+					`;
+					container.appendChild(el);
+				});
+			}
+
+			function watchSVG(){
+				return `
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'>
+						<rect x='12' y='8' width='40' height='48' rx='6' fill='url(#g)' />
+						<circle cx='32' cy='32' r='12' fill='#061221' stroke='rgba(255,255,255,0.06)' />
+						<path d='M32 24v8l6 4' stroke='white' stroke-opacity='0.9' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6'/>
+						<defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='#0ea5a3'/><stop offset='1' stop-color='#06b6d4'/></linearGradient></defs>
+					</svg>`;
+			}
+
+			function addToCart(id, qty=1){ if(!cart[id]) cart[id]=0; cart[id]+=qty; saveCart(); }
+			function removeFromCart(id){ delete cart[id]; saveCart(); }
+			function updateQty(id, qty){ if(qty<=0) removeFromCart(id); else cart[id]=qty; saveCart(); }
+
+			function updateCartUI(){
+				const list = document.getElementById('cartList'); list.innerHTML='';
+				const ids = Object.keys(cart);
+				let total = 0;
+				ids.forEach(id=>{
+					const product = products.find(p=>p.id===id); if(!product) return;
+					const qty = cart[id];
+					total += product.price * qty;
+					const item = document.createElement('div'); item.className='cart-item';
+					item.innerHTML = `
+						<div class="ci-thumb">${smallSVG()}</div>
+						<div style="flex:1">
+							<div style="display:flex;justify-content:space-between"><div>${product.name}</div><div class="price">${formatPrice(product.price*qty)}</div></div>
+							<div style="color:var(--muted);font-size:13px;margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+								<div class="qty"><button class="btn" data-dec="${id}">-</button><div style="padding:0 8px">${qty}</div><button class="btn" data-inc="${id}">+</button></div>
+								<button class="btn" data-rem="${id}">Eliminar</button>
+							</div>
+						</div>
+					`;
+					list.appendChild(item);
+				});
+				document.getElementById('cartTotal').textContent = formatPrice(total);
+				document.getElementById('checkoutTotal').textContent = formatPrice(total);
+				document.getElementById('cartCount').textContent = ids.reduce((s,k)=>s+cart[k],0) || 0;
+			}
+
+			function smallSVG(){return `<svg width='28' height='28' viewBox='0 0 64 64' fill='none' xmlns='http://www.w3.org/2000/svg'><rect x='2' y='6' width='60' height='52' rx='6' fill='#081926'/><circle cx='32' cy='32' r='10' fill='#0ea5a3'/></svg>`}
+
+			// Listeners
+			document.addEventListener('click', (e)=>{
+				const add = e.target.closest('[data-add]');
+				const buy = e.target.closest('[data-buy]');
+				const inc = e.target.closest('[data-inc]');
+				const dec = e.target.closest('[data-dec]');
+				const rem = e.target.closest('[data-rem]');
+				if(add){ addToCart(add.dataset.add); }
+				if(buy){ addToCart(buy.dataset.buy); openCheckout(); }
+				if(inc){ updateQty(inc.dataset.inc, (cart[inc.dataset.inc]||0)+1); }
+				if(dec){ updateQty(dec.dataset.dec, (cart[dec.dataset.dec]||0)-1); }
+				if(rem){ removeFromCart(rem.dataset.rem); }
+			});
+
+			document.getElementById('btnClear').addEventListener('click', ()=>{ cart={}; saveCart(); });
+			document.getElementById('btnOpenCart').addEventListener('click', ()=>{ document.getElementById('cartPane').scrollIntoView({behavior:'smooth'}) });
+			document.getElementById('btnCheckout').addEventListener('click', openCheckout);
+			document.getElementById('btnCloseOverlay').addEventListener('click', closeCheckout);
+
+			function openCheckout(){ document.getElementById('overlay').style.display='flex'; document.getElementById('cName').focus(); }
+			function closeCheckout(){ document.getElementById('overlay').style.display='none'; }
+
+			document.getElementById('checkoutForm').addEventListener('submit', (ev)=>{
+				ev.preventDefault();
+				// Simular envío
+				const name = document.getElementById('cName').value;
+				const email = document.getElementById('cEmail').value;
+				const total = document.getElementById('checkoutTotal').textContent;
+				// Aquí se haría la llamada al servidor; por ahora mostramos confirmación
+				alert(`Gracias ${name}!\nHemos recibido tu pedido por ${total}.\nTe enviaremos un correo a ${email}.`);
+				cart = {}; saveCart(); closeCheckout();
+			});
+
+			// Inicialización
+			function init(){ renderCatalog(); updateCartUI(); document.getElementById('year').textContent = new Date().getFullYear(); }
+
+			// Pequeño ajuste: actualizar UI cuando cargue almacenamiento
+			window.addEventListener('storage', ()=>{ cart = JSON.parse(localStorage.getItem('cart:v1')||'{}'); updateCartUI(); });
+
+			init();
+		</script>
+	</body>
+</html>
+
