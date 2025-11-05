@@ -1,9 +1,9 @@
 services:
   web:
     image: nginx:alpine
-    container_name: nginx-practica
+    container_name: nginx-practice
     ports:
-      - "8080:80"
+      - "8087:80"
     volumes:
       - ./src:/usr/share/nginx/html:ro
     restart: unless-stopped
